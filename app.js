@@ -1,8 +1,15 @@
-const express = require('express');
-const ejs = require('ejs');
-const mongoose = require('mongoose');
-const app = express();
+const express = require("express");
+const mongoose = require("mongoose");
+const fileUpload = require("express-fileupload");
+const methodOverride = require("method-override");
+const ejs = require("ejs");
+const fs = require("fs"); //klasör oluşturma
+const pageController = require('./controllers/pageControllers');
+const postController = require('./controllers/postControllers');
 const Post = require("./models/Post");
+
+
+const app = express();
 
 //connect DB
 mongoose.connect("mongodb://127.0.0.1:27017/cleanblog-test-db", {
@@ -12,33 +19,31 @@ mongoose.connect("mongodb://127.0.0.1:27017/cleanblog-test-db", {
 .then(db => console.log('DB is connected'))
 .catch(err => console.log(err));
 
-//TEMPLATE ENGINE
-app.set('view engine', 'ejs'); // set the view engine to ejs
+//TEMPLATE ENGİNE
+app.set("view engine", "ejs");
 
-// MIDDLEWARE
-app.use(express.static('public')); // to access the files in public folder
+//MiddleWares
+app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(fileUpload());
+app.use(
+  methodOverride("_method", {
+    methods: ["POST", "GET"],
+  })
+);
 
+//Routes
+app.get('/', postController.getAllPosts);
+app.get('/posts/:id', postController.getPost);
+app.post('/posts', postController.createPost);
+app.put('/posts/:id', postController.updatePost);
+app.delete('/posts/:id', postController.deletePost);
 
-//ROUTES
-app.get('/', (req, res) => {
-    res.render('index');
-});
-app.get('/about', (req, res) => {
-    res.render('about');
-});
-app.get('/post', (req, res) => {
-    res.render('post');
-});
-app.get('/add_post', (req, res) => {
-  res.render('add_post');
-});
+app.get('/posts/edit/:id', pageController.getEditPage);
+app.get("/about", pageController.getAboutPage);
+app.get("/add_post", pageController.getAddPage);
 
-app.post("/posts", async (req, res) => {
-  await Post.create(req.body);
-  res.redirect("/");
-});
 
 
 const port = 3001;
