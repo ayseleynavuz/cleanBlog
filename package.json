@@ -4,7 +4,7 @@
   "description": "cleanBlog Project",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node app.js"
   },
   "keywords": [
     "node.js",
@@ -20,6 +20,7 @@
     "prettier": "2.8.8"
   },
   "dependencies": {
+    "dotenv": "^16.1.4",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-fileupload": "^1.4.0",

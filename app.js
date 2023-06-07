@@ -7,12 +7,19 @@ const fs = require("fs"); //klasör oluşturma
 const pageController = require('./controllers/pageControllers');
 const postController = require('./controllers/postControllers');
 const Post = require("./models/Post");
+const dotenv = require('dotenv').config();
 
+ 
 
 const app = express();
 
 //connect DB
-mongoose.connect("mongodb://127.0.0.1:27017/cleanblog-test-db", {
+
+// genel bağlantı dizesi: mongoose.connect("mongodb+srv://username:<password>@cluster0.ibjoeof.mongodb.net/");
+// compass üzerinden bağlantı için : mongodb://127.0.0.1:27017/cleanblog-test-db
+
+const mongoURI = process.env.MONGO_URI;
+mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -46,7 +53,7 @@ app.get("/add_post", pageController.getAddPage);
 
 
 
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
